@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcurrentLinkedList", "ConcurrentLinkedList\ConcurrentLinkedList.csproj", "{4C31A49C-F6B4-4CD4-8899-3AD490210B74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcurrentLinkedList", "src\ConcurrentLinkedList\ConcurrentLinkedList.csproj", "{4C31A49C-F6B4-4CD4-8899-3AD490210B74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
