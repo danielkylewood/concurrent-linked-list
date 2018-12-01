@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcurrentLinkedList", "src\ConcurrentLinkedList\ConcurrentLinkedList.csproj", "{4C31A49C-F6B4-4CD4-8899-3AD490210B74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConcurrentLinkedList", "src\ConcurrentLinkedList\ConcurrentLinkedList.csproj", "{4C31A49C-F6B4-4CD4-8899-3AD490210B74}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LRU.Tests.Unit", "test\LRU.Tests.Unit\LRU.Tests.Unit.csproj", "{307925C6-7A0C-4DBD-AFDD-97919C67C7C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A5758D42-C3BA-49F7-B975-0130192F0D5B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{DC9887E1-0C9B-40D3-B02E-E4EE75140DDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +21,17 @@ Global
 		{4C31A49C-F6B4-4CD4-8899-3AD490210B74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C31A49C-F6B4-4CD4-8899-3AD490210B74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C31A49C-F6B4-4CD4-8899-3AD490210B74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{307925C6-7A0C-4DBD-AFDD-97919C67C7C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{307925C6-7A0C-4DBD-AFDD-97919C67C7C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{307925C6-7A0C-4DBD-AFDD-97919C67C7C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{307925C6-7A0C-4DBD-AFDD-97919C67C7C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4C31A49C-F6B4-4CD4-8899-3AD490210B74} = {A5758D42-C3BA-49F7-B975-0130192F0D5B}
+		{307925C6-7A0C-4DBD-AFDD-97919C67C7C8} = {DC9887E1-0C9B-40D3-B02E-E4EE75140DDC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A08696D3-05BB-40AA-AC2F-8DCF872D9C95}
