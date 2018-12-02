@@ -94,9 +94,9 @@ namespace ConcurrentLinkedList.Tests.Unit
             // Given a large number of nodes to add and remove concurrently to the list
             const int startIndex = 1;
             const int numberNodes = _numNodesToTest;
-            var addTaskList = GenerateTasks(numberNodes, startIndex, value => _linkedList.TryAdd(value)).ToList();
-            var removeTaskList = GenerateTasks(numberNodes, startIndex, value => _linkedList.Remove(value, out var _)).ToList();
-            removeTaskList.AddRange(GenerateTasks(numberNodes, startIndex + numberNodes + 1, value => _linkedList.TryAdd(value)));
+            var addTaskList = GenerateTasks(numberNodes, startIndex, value => _linkedList.TryAdd(new LinkedListValue<int, int>(value, value))).ToList();
+            var removeTaskList = GenerateTasks(numberNodes, startIndex, value => _linkedList.Remove(new LinkedListValue<int, int>(value, value), out var _)).ToList();
+            removeTaskList.AddRange(GenerateTasks(numberNodes, startIndex + numberNodes + 1, value => _linkedList.TryAdd(new LinkedListValue<int, int>(value, value))));
 
             // When large number of nodes are added to the list concurrently
             Parallel.ForEach(addTaskList, task => { task.Start(); });
@@ -111,7 +111,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             AssertTaskListResults(removeTaskList);
             AssertLinkedListContainsNumberOfValidNodes(numberNodes + _initialNodesInList, _linkedList);
         }
-
+       
         [Test]
         public void When_Node_Exists_Checking_Contains_Should_Return_True()
         {
