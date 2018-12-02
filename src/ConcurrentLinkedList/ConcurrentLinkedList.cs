@@ -1,10 +1,94 @@
-﻿using System.Threading;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ConcurrentLinkedList
 {
     public class ConcurrentLinkedList<T>
     {
         public Node<T> First;
+
+        private int _counter;
+        private readonly Node<T> _dummy;
+        private readonly ConcurrentDictionary<int, ThreadStateStore<T>> _threadStatus;
+
+        public ConcurrentLinkedList()
+        {
+            _counter = 0;
+            _dummy = new Node<T>(true);
+            _threadStatus = new ConcurrentDictionary<int, ThreadStateStore<T>>();
+
+            First = new Node<T>(default(T), NodeState.REM, -1);
+        }
+
+        private void Enlist(Node<T> node)
+        {
+            var phase = Interlocked.Increment(ref _counter);
+            var threadState = new ThreadState<T>(phase, true, node);
+            var threadStateStore = new ThreadStateStore<T>(threadState);
+            _threadStatus.AddOrUpdate(Thread.CurrentThread.ManagedThreadId, threadStateStore, (key, value) => threadStateStore);
+
+            foreach (var threadId in _threadStatus.Keys)
+            {
+                HelpEnlist(threadId, phase);
+            }
+
+            HelpFinish();
+        }
+
+        private void HelpEnlist(int threadId, int phase)
+        {
+            while (IsPending(threadId, phase))
+            {
+                var current = First;
+                var previous = current.Previous;
+                if (current.Equals(First))
+                {
+                    if (previous == null)
+                    {
+                        if (IsPending(threadId, phase))
+                        {
+                            var node = _threadStatus[threadId].ThreadState.Node;
+                            var original = Interlocked.CompareExchange(ref current.Previous, node, null);
+                            if (original is null)
+                            {
+                                HelpFinish();
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        HelpFinish();
+                    }
+                }
+            }
+        }
+
+        private void HelpFinish()
+        {
+            var current = First;
+            var previous = current.Previous;
+            if (previous != null && !previous.IsDummy())
+            {
+                var threadId = previous.ThreadId;
+                var threadStateStore = _threadStatus[threadId];
+                if (current.Equals(First) && previous.Equals(threadStateStore.ThreadState.Node))
+                {
+                    var updatedState = new ThreadState<T>(threadStateStore.ThreadState.Phase, false, threadStateStore.ThreadState.Node);
+                    threadStateStore.AtomicCompareAndExchangeState(updatedState, threadStateStore.ThreadState);
+                    previous.Next = current;
+                    Interlocked.CompareExchange(ref First, previous, current);
+                    current.Previous = _dummy;
+                }
+            }
+        }
+
+        private bool IsPending(int threadId, int phase)
+        {
+            var threadState = _threadStatus[threadId].ThreadState;
+            return threadState.Pending && threadState.Phase <= phase;
+        }
 
         /// <summary>
         /// Attempts to add the specified value to the <see cref="ConcurrentLinkedList{T}"/>.
@@ -62,20 +146,6 @@ namespace ConcurrentLinkedList
             return false;
         }
 
-        private void Enlist(Node<T> node)
-        {
-            while (true)
-            {
-                var temporaryFirst = First;
-                node.Next = temporaryFirst;
-                var originalValue = Interlocked.CompareExchange(ref First, node, temporaryFirst);
-                if (ReferenceEquals(originalValue, temporaryFirst))
-                {
-                    return;
-                }
-            }
-        }
-
         private static bool HelpInsert(Node<T> node, T value)
         {
             var previous = node;
@@ -89,7 +159,7 @@ namespace ConcurrentLinkedList
                     previous.Next = successor;
                     current = successor;
                 }
-                else if (!current.Value.Equals(value))
+                else if (current.Value != null && !current.Value.Equals(value))
                 {
                     previous = current;
                     current = current.Next;

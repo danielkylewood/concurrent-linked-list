@@ -8,11 +8,12 @@ namespace ConcurrentLinkedList
     {
         public T Value;
         public Node<T> Next;
-        public Node<T> Previous;
-
-        internal int ThreadId;
-
+        
         private int _state;
+        private readonly bool _isDummy;
+
+        internal Node<T> Previous;
+        internal int ThreadId;
         internal NodeState State
         {
             get => (NodeState)_state;
@@ -24,11 +25,23 @@ namespace ConcurrentLinkedList
             Value = value;
             ThreadId = threadId;
             _state = (int)state;
+            _isDummy = false;
+        }
+
+        internal Node(bool isDummy)
+        {
+            _isDummy = true;
+            Value = default(T);
         }
 
         internal NodeState AtomicCompareAndExchangeState(NodeState value, NodeState compare)
         {
             return (NodeState)Interlocked.CompareExchange(ref _state, (int)value, (int)compare);
+        }
+
+        internal bool IsDummy()
+        {
+            return _isDummy;
         }
     }
 }

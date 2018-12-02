@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -8,6 +7,8 @@ namespace ConcurrentLinkedList.Tests.Unit
 {
     public class ConcurrentLinkedListTests : UnitTestBase
     {
+        private const int _numNodesToTest = 10000;
+        private const int _initialNodesInList = 1;
         private ConcurrentLinkedList<dynamic> _linkedList;
 
         [SetUp]
@@ -33,7 +34,7 @@ namespace ConcurrentLinkedList.Tests.Unit
         public async Task When_Adding_Many_Nodes_Concurrently_To_The_List_Then_All_Nodes_Are_Added_Correctly()
         {
             // Given a large number of nodes to add concurrently to the list
-            const int numberNodes = 10000;
+            const int numberNodes = _numNodesToTest;
             var taskList = GenerateTasks(numberNodes, 1, value => _linkedList.TryAdd(value)).ToList();
 
             // When large number of nodes are added to the list concurrently
@@ -44,7 +45,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             AssertTaskListResults(taskList);
             AssertLinkedListHasNoCycles(_linkedList);
             AssertLinkedListHasNoDuplicate(_linkedList);
-            AssertLinkedListContainsAllNodes(numberNodes, _linkedList);
+            AssertLinkedListContainsAllNodes(numberNodes + _initialNodesInList, _linkedList);
         }
 
         [Test]
@@ -69,7 +70,7 @@ namespace ConcurrentLinkedList.Tests.Unit
         {
             // Given a large number of nodes to add and remove concurrently to the list
             const int startIndex = 1;
-            const int numberNodes = 10000;
+            const int numberNodes = _numNodesToTest;
             var addTaskList = GenerateTasks(numberNodes, startIndex, value => _linkedList.TryAdd(value)).ToList();
             var removeTaskList = GenerateTasks(numberNodes, startIndex, value => _linkedList.Remove(value, out var _)).ToList();
 
@@ -92,7 +93,7 @@ namespace ConcurrentLinkedList.Tests.Unit
         {
             // Given a large number of nodes to add and remove concurrently to the list
             const int startIndex = 1;
-            const int numberNodes = 10000;
+            const int numberNodes = _numNodesToTest;
             var addTaskList = GenerateTasks(numberNodes, startIndex, value => _linkedList.TryAdd(value)).ToList();
             var removeTaskList = GenerateTasks(numberNodes, startIndex, value => _linkedList.Remove(value, out var _)).ToList();
             removeTaskList.AddRange(GenerateTasks(numberNodes, startIndex + numberNodes + 1, value => _linkedList.TryAdd(value)));
@@ -108,7 +109,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             // Then all tasks should have been successful and there should be a certain number of valid nodes
             AssertTaskListResults(addTaskList);
             AssertTaskListResults(removeTaskList);
-            AssertLinkedListContainsNumberOfValidNodes(numberNodes, _linkedList);
+            AssertLinkedListContainsNumberOfValidNodes(numberNodes + _initialNodesInList, _linkedList);
         }
 
         [Test]

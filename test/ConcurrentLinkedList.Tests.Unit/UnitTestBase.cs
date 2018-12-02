@@ -35,15 +35,24 @@ namespace ConcurrentLinkedList.Tests.Unit
 
         protected static void AssertLinkedListOnlyContainsInvalidStateNodes(ConcurrentLinkedList<dynamic> linkedList)
         {
+            var numRemNodes = 0;
             var currentNode = linkedList.First;
             while (currentNode != null)
             {
                 if (currentNode.State != NodeState.INV)
                 {
-                    Assert.Fail("Cycle detected in linked list.");
+                    if (currentNode.State != NodeState.REM)
+                    {
+                        Assert.Fail("Valid node detected in list.");
+                    }
+                    else
+                    {
+                        numRemNodes++;
+                    }
                 }
                 currentNode = currentNode.Next;
             }
+            Assert.That(numRemNodes, Is.LessThanOrEqualTo(1));
         }
 
         protected static void AssertLinkedListHasNoDuplicate(ConcurrentLinkedList<dynamic> linkedList)
