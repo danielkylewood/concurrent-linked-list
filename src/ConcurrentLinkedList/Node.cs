@@ -20,6 +20,12 @@ namespace ConcurrentLinkedList
             set => _state = (int)value;
         }
 
+        internal Node()
+        {
+            _isDummy = true;
+            Value = default(T);
+        }
+
         internal Node(T value, NodeState state, int threadId)
         {
             Value = value;
@@ -27,13 +33,7 @@ namespace ConcurrentLinkedList
             _state = (int)state;
             _isDummy = false;
         }
-
-        internal Node(bool isDummy)
-        {
-            _isDummy = true;
-            Value = default(T);
-        }
-
+        
         internal NodeState AtomicCompareAndExchangeState(NodeState value, NodeState compare)
         {
             return (NodeState)Interlocked.CompareExchange(ref _state, (int)value, (int)compare);

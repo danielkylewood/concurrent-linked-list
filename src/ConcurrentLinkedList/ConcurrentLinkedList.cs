@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace ConcurrentLinkedList
@@ -7,87 +6,21 @@ namespace ConcurrentLinkedList
     public class ConcurrentLinkedList<T>
     {
         public Node<T> First;
-
+        
         private int _counter;
         private readonly Node<T> _dummy;
-        private readonly ConcurrentDictionary<int, ThreadStateStore<T>> _threadStatus;
+        private readonly ConcurrentDictionary<int, int> _threads;
+        private readonly ThreadState<T>[] _threadStates;
 
         public ConcurrentLinkedList()
         {
             _counter = 0;
-            _dummy = new Node<T>(true);
-            _threadStatus = new ConcurrentDictionary<int, ThreadStateStore<T>>();
+            _dummy = new Node<T>();
 
+            ThreadPool.GetMaxThreads(out var _, out var maxThreads);
+            _threadStates = new ThreadState<T>[maxThreads];
+            _threads = new ConcurrentDictionary<int, int>();
             First = new Node<T>(default(T), NodeState.REM, -1);
-        }
-
-        private void Enlist(Node<T> node)
-        {
-            var phase = Interlocked.Increment(ref _counter);
-            var threadState = new ThreadState<T>(phase, true, node);
-            var threadStateStore = new ThreadStateStore<T>(threadState);
-            _threadStatus.AddOrUpdate(Thread.CurrentThread.ManagedThreadId, threadStateStore, (key, value) => threadStateStore);
-
-            foreach (var threadId in _threadStatus.Keys)
-            {
-                HelpEnlist(threadId, phase);
-            }
-
-            HelpFinish();
-        }
-
-        private void HelpEnlist(int threadId, int phase)
-        {
-            while (IsPending(threadId, phase))
-            {
-                var current = First;
-                var previous = current.Previous;
-                if (current.Equals(First))
-                {
-                    if (previous == null)
-                    {
-                        if (IsPending(threadId, phase))
-                        {
-                            var node = _threadStatus[threadId].ThreadState.Node;
-                            var original = Interlocked.CompareExchange(ref current.Previous, node, null);
-                            if (original is null)
-                            {
-                                HelpFinish();
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        HelpFinish();
-                    }
-                }
-            }
-        }
-
-        private void HelpFinish()
-        {
-            var current = First;
-            var previous = current.Previous;
-            if (previous != null && !previous.IsDummy())
-            {
-                var threadId = previous.ThreadId;
-                var threadStateStore = _threadStatus[threadId];
-                if (current.Equals(First) && previous.Equals(threadStateStore.ThreadState.Node))
-                {
-                    var updatedState = new ThreadState<T>(threadStateStore.ThreadState.Phase, false, threadStateStore.ThreadState.Node);
-                    threadStateStore.AtomicCompareAndExchangeState(updatedState, threadStateStore.ThreadState);
-                    previous.Next = current;
-                    Interlocked.CompareExchange(ref First, previous, current);
-                    current.Previous = _dummy;
-                }
-            }
-        }
-
-        private bool IsPending(int threadId, int phase)
-        {
-            var threadState = _threadStatus[threadId].ThreadState;
-            return threadState.Pending && threadState.Phase <= phase;
         }
 
         /// <summary>
@@ -220,6 +153,77 @@ namespace ConcurrentLinkedList
             }
 
             return false;
+        }
+
+        private void Enlist(Node<T> node)
+        {
+            var phase = Interlocked.Increment(ref _counter);
+            var threadState = new ThreadState<T>(phase, true, node);
+            var currentThreadId = Thread.CurrentThread.ManagedThreadId;
+
+            _threadStates[currentThreadId] = threadState;
+            _threads.AddOrUpdate(currentThreadId, currentThreadId, (key, value) => currentThreadId);
+
+            foreach (var threadId in _threads.Keys)
+            {
+                HelpEnlist(threadId, phase);
+            }
+
+            HelpFinish();
+        }
+
+        private void HelpEnlist(int threadId, int phase)
+        {
+            while (IsPending(threadId, phase))
+            {
+                var current = First;
+                var previous = current.Previous;
+                if (current.Equals(First))
+                {
+                    if (previous == null)
+                    {
+                        if (IsPending(threadId, phase))
+                        {
+                            var node = _threadStates[threadId].Node;
+                            var original = Interlocked.CompareExchange(ref current.Previous, node, null);
+                            if (original is null)
+                            {
+                                HelpFinish();
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        HelpFinish();
+                    }
+                }
+            }
+        }
+
+        private void HelpFinish()
+        {
+            var current = First;
+            var previous = current.Previous;
+            if (previous != null && !previous.IsDummy())
+            {
+                var threadId = previous.ThreadId;
+                var threadState = _threadStates[threadId];
+                if (current.Equals(First) && previous.Equals(threadState.Node))
+                {
+                    var updatedState = new ThreadState<T>(threadState.Phase, false, threadState.Node);
+                    Interlocked.CompareExchange(ref _threadStates[threadId], updatedState, threadState);
+                    previous.Next = current;
+                    Interlocked.CompareExchange(ref First, previous, current);
+                    current.Previous = _dummy;
+                }
+            }
+        }
+
+        private bool IsPending(int threadId, int phase)
+        {
+            var threadState = _threadStates[threadId];
+            return threadState.Pending && threadState.Phase <= phase;
         }
     }
 }
