@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConcurrentLinkedList", "src\ConcurrentLinkedList\ConcurrentLinkedList.csproj", "{4C31A49C-F6B4-4CD4-8899-3AD490210B74}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LRU.Tests.Unit", "test\LRU.Tests.Unit\LRU.Tests.Unit.csproj", "{307925C6-7A0C-4DBD-AFDD-97919C67C7C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConcurrentLinkedList.Tests.Unit", "test\LRU.Tests.Unit\ConcurrentLinkedList.Tests.Unit.csproj", "{307925C6-7A0C-4DBD-AFDD-97919C67C7C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A5758D42-C3BA-49F7-B975-0130192F0D5B}"
 EndProject

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 
 namespace ConcurrentLinkedList
 {
@@ -7,12 +6,10 @@ namespace ConcurrentLinkedList
     {
         public Node<T> First;
 
-        public ConcurrentLinkedList()
-        {
-
-        }
-
-        public bool AddFirst(T value)
+        /// <summary>
+        /// Attempts to add the specified value to the <see cref="ConcurrentLinkedList{T}"/>.
+        /// </summary>
+        public bool TryAdd(T value)
         {
             var node = new Node<T>(value, (int) NodeState.INS, Thread.CurrentThread.ManagedThreadId);
 
@@ -22,23 +19,29 @@ namespace ConcurrentLinkedList
             var originalValue = node.AtomicCompareAndExchangeState(insertionResult ? NodeState.DAT : NodeState.INV, NodeState.INS);
             if (originalValue != NodeState.INS)
             {
-                HelpRemove(node, value);
+                HelpRemove(node, value, out _);
                 node.State = NodeState.INV;
             }
 
             return insertionResult;
         }
 
-        public bool Remove(T value)
+        /// <summary>
+        /// Attempts to remove the specified value from the <see cref="ConcurrentLinkedList{T}"/>.
+        /// </summary>
+        public bool Remove(T value, out T result)
         {
             var node = new Node<T>(value, NodeState.REM, Thread.CurrentThread.ManagedThreadId);
 
             Enlist(node);
-            var removeResult = HelpRemove(node, value);
+            var removeResult = HelpRemove(node, value, out result);
             node.State = NodeState.INV;
             return removeResult;
         }
 
+        /// <summary>
+        /// Determines whether the <see cref="ConcurrentLinkedList{T}"/> contains the specified key.
+        /// </summary>
         public bool Contains(T value)
         {
             var current = First;
@@ -104,8 +107,9 @@ namespace ConcurrentLinkedList
             return true;
         }
 
-        private static bool HelpRemove(Node<T> node, T value)
+        private static bool HelpRemove(Node<T> node, T value, out T result)
         {
+            result = default(T);
             var previous = node;
             var current = previous.Next;
 
@@ -132,12 +136,14 @@ namespace ConcurrentLinkedList
                     var originalValue = current.AtomicCompareAndExchangeState(NodeState.REM, NodeState.INS);
                     if (originalValue == NodeState.INS)
                     {
+                        result = current.Value;
                         current.State = NodeState.INV;
                         return true;
                     }
                 }
                 else if (state == NodeState.DAT)
                 {
+                    result = current.Value;
                     current.State = NodeState.INV;
                     return true;
                 }

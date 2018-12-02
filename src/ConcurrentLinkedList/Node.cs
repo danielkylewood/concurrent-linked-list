@@ -1,6 +1,7 @@
-﻿using System;
+﻿using System.Runtime.CompilerServices;
 using System.Threading;
 
+[assembly:InternalsVisibleTo("ConcurrentLinkedList.Tests.Unit")]
 namespace ConcurrentLinkedList
 {
     public class Node<T>
