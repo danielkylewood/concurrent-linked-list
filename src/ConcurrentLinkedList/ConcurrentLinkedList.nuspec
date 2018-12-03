@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
+    <id>ConcurrentLinkedList</id>
     <version>$version$</version>
-    <title>$title$</title>
     <authors>Daniel Wood</authors>
     <owners>$author$</owners>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<projectUrl>https://github.com/danielkylewood/concurrent-linked-list</projectUrl>	
+    <license type="expression">Apache-2.0</license>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Lock-free thread-safe singly linked list based on work presented in Zhang, K et al. Practical Non-blocking Unordered Lists.</description>
-    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>Tag1 Tag2</tags>
+    <tags>linked list concurrent</tags>
   </metadata>
 </package>
