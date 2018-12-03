@@ -7,7 +7,7 @@
     <owners>$author$</owners>
 	<projectUrl>https://github.com/danielkylewood/concurrent-linked-list</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Lock-free thread-safe singly linked list based on work presented in Zhang, K et al. Practical Non-blocking Unordered Lists.</description>
+    <description>Thread-safe singly linked list based on work presented in Zhang, K et al. Practical Non-blocking Unordered Lists.</description>
     <copyright>Copyright 2018</copyright>
     <tags>linked list concurrent</tags>
   </metadata>
