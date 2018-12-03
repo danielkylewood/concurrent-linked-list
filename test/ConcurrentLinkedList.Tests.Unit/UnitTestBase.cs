@@ -18,7 +18,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             }
         }
 
-        protected static void AssertLinkedListHasNoCycles(ConcurrentLinkedList<dynamic> linkedList)
+        protected static void AssertLinkedListHasNoCycles(IConcurrentLinkedList<dynamic> linkedList)
         {
             var currentNode = linkedList.First;
             var jumpNode = linkedList.First;
@@ -33,7 +33,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             }
         }
 
-        protected static void AssertLinkedListOnlyContainsInvalidStateNodes(ConcurrentLinkedList<dynamic> linkedList)
+        protected static void AssertLinkedListOnlyContainsInvalidStateNodes(IConcurrentLinkedList<dynamic> linkedList)
         {
             var numRemNodes = 0;
             var currentNode = linkedList.First;
@@ -55,7 +55,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             Assert.That(numRemNodes, Is.LessThanOrEqualTo(1));
         }
 
-        protected static void AssertLinkedListHasNoDuplicate(ConcurrentLinkedList<dynamic> linkedList)
+        protected static void AssertLinkedListHasNoDuplicate(IConcurrentLinkedList<dynamic> linkedList)
         {
             var currentNode = linkedList.First;
             var hashSet = new HashSet<dynamic>();
@@ -70,7 +70,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             }
         }
 
-        protected static void AssertLinkedListContainsAllNodes(int numberNodes, ConcurrentLinkedList<dynamic> linkedList)
+        protected static void AssertLinkedListContainsAllNodes(int numberNodes, IConcurrentLinkedList<dynamic> linkedList)
         {
             var nodeCount = 0;
             var currentNode = linkedList.First;
@@ -83,7 +83,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             Assert.That(nodeCount, Is.EqualTo(numberNodes), "Nodes in linked list not accounted for.");
         }
 
-        protected static void AssertLinkedListContainsNumberOfValidNodes(int numberValidNodes, ConcurrentLinkedList<dynamic> linkedList)
+        protected static void AssertLinkedListContainsNumberOfValidNodes(int numberValidNodes, IConcurrentLinkedList<dynamic> linkedList)
         {
             var nodeCount = 0;
             var currentNode = linkedList.First;

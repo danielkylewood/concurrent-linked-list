@@ -9,7 +9,7 @@ namespace ConcurrentLinkedList.Tests.Unit
     {
         private const int _numNodesToTest = 10000;
         private const int _initialNodesInList = 1;
-        private ConcurrentLinkedList<dynamic> _linkedList;
+        private IConcurrentLinkedList<dynamic> _linkedList;
 
         [SetUp]
         public void Setup()

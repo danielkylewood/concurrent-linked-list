@@ -1,13 +1,15 @@
 ﻿using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace ConcurrentLinkedList
 {
-    public class ConcurrentLinkedList<T>
+    public class ConcurrentLinkedList<T> : IConcurrentLinkedList<T>
     {
-        public Node<T> First;
+        public Node<T> First => _first;
         
         private int _counter;
+        private Node<T> _first;
         private readonly Node<T> _dummy;
         private readonly ConcurrentDictionary<int, int> _threads;
         private readonly ThreadState<T>[] _threadStates;
@@ -20,7 +22,7 @@ namespace ConcurrentLinkedList
             ThreadPool.GetMaxThreads(out var _, out var maxThreads);
             _threadStates = new ThreadState<T>[maxThreads];
             _threads = new ConcurrentDictionary<int, int>();
-            First = new Node<T>(default(T), NodeState.REM, -1);
+            _first = new Node<T>(default(T), NodeState.REM, -1);
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace ConcurrentLinkedList
         /// </summary>
         public bool Contains(T value)
         {
-            var current = First;
+            var current = _first;
             while (current != null)
             {
                 if (current.Value.Equals(value))
@@ -176,9 +178,9 @@ namespace ConcurrentLinkedList
         {
             while (IsPending(threadId, phase))
             {
-                var current = First;
+                var current = _first;
                 var previous = current.Previous;
-                if (current.Equals(First))
+                if (current.Equals(_first))
                 {
                     if (previous == null)
                     {
@@ -203,18 +205,18 @@ namespace ConcurrentLinkedList
 
         private void HelpFinish()
         {
-            var current = First;
+            var current = _first;
             var previous = current.Previous;
             if (previous != null && !previous.IsDummy())
             {
                 var threadId = previous.ThreadId;
                 var threadState = _threadStates[threadId];
-                if (current.Equals(First) && previous.Equals(threadState.Node))
+                if (current.Equals(_first) && previous.Equals(threadState.Node))
                 {
                     var updatedState = new ThreadState<T>(threadState.Phase, false, threadState.Node);
                     Interlocked.CompareExchange(ref _threadStates[threadId], updatedState, threadState);
                     previous.Next = current;
-                    Interlocked.CompareExchange(ref First, previous, current);
+                    Interlocked.CompareExchange(ref _first, previous, current);
                     current.Previous = _dummy;
                 }
             }
