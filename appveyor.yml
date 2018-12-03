@@ -7,9 +7,9 @@ before_build:
 build:
   verbosity: minimal
 after_build:
-- ps: dotnet pack src\ConcurrentLinkedList -o .\Artifacts
+- ps: dotnet pack src\ConcurrentLinkedList -o .\Artifacts --version-suffix=$env:APPVEYOR_BUILD_NUMBER
 artifacts:
-- path: .\Artifacts\*
+- path: src\ConcurrentLinkedList\Artifacts\*
 deploy:
   provider: NuGet
   api_key:
