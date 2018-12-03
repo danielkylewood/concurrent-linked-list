@@ -7,7 +7,7 @@ before_build:
 build:
   verbosity: minimal
 after_build:
-- ps: nuget pack src\ConcurrentLinkedList -o .\Artifacts -version %appveyor_build_version%
+- ps: nuget pack src\ConcurrentLinkedList -OutputDirectory .\Artifacts -Version %appveyor_build_version%
 artifacts:
 - path: src\ConcurrentLinkedList\Artifacts\*
 deploy:
