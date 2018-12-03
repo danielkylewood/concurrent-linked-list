@@ -6,9 +6,10 @@ before_build:
 - ps: nuget restore
 build:
   verbosity: minimal
-  publish_nuget: true
+after_build:
+- ps: dotnet pack src\ConcurrentLinkedList -o .\Artifacts
 artifacts:
-  - path: '**\*.nupkg'
+- path: .\Artifacts\*
 deploy:
   provider: NuGet
   api_key:
