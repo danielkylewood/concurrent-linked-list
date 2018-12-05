@@ -1,6 +1,6 @@
 ﻿namespace ConcurrentLinkedList
 {
-    public enum NodeState
+    internal enum NodeState
     {
         INS = 0,
         REM = 1,

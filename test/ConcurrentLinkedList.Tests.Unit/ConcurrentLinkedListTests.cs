@@ -109,6 +109,7 @@ namespace ConcurrentLinkedList.Tests.Unit
             // Then all tasks should have been successful and there should be a certain number of valid nodes
             AssertTaskListResults(addTaskList);
             AssertTaskListResults(removeTaskList);
+            AssertLinkedListHasNoCycles(_linkedList);
             AssertLinkedListContainsNumberOfValidNodes(numberNodes + _initialNodesInList, _linkedList);
         }
        
