@@ -1,8 +1,3 @@
-# Master configuration with deploy
--  
-branches:
-  only:
-    - master    
 version: 1.0.{build}
 image: Visual Studio 2017
 configuration: Release
@@ -10,6 +5,10 @@ before_build:
 - ps: nuget restore
 build:
   verbosity: minimal
+  
+branches:
+  only:
+    - master    
 after_build:
 - ps: nuget pack src\ConcurrentLinkedList -OutputDirectory .\Artifacts -Version $env:APPVEYOR_BUILD_VERSION
 artifacts:
@@ -20,13 +19,3 @@ deploy:
     secure: IXPOCrCUrljhGbmUKteGUbtG22rLYuFTy8XUrxYf6rFuG942zE+VmMg7fFD85YoD
   skip_symbols: true
   artifact: /.*\.nupkg/
- 
-# Fallback for other branches - no deploy and debug configuration 
--
-version: 1.0.{build}
-image: Visual Studio 2017
-configuration: Debug
-before_build:
-- ps: nuget restore
-build:
-  verbosity: minimal
