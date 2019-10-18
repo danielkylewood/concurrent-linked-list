@@ -17,3 +17,4 @@ deploy:
   artifact: /.*\.nupkg/
   on:
     branch: master
+    APPVEYOR_REPO_TAG: true  
