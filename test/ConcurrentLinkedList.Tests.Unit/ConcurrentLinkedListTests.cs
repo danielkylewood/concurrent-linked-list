@@ -7,7 +7,7 @@ namespace ConcurrentLinkedList.Tests.Unit
 {
     public class ConcurrentLinkedListTests : UnitTestBase
     {
-        private const int _numNodesToTest = 30000;
+        private const int _numNodesToTest = 20000;
         private const int _initialNodesInList = 1;
         private IConcurrentLinkedList<dynamic> _linkedList;
 
