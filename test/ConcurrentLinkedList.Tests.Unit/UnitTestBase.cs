@@ -18,6 +18,17 @@ namespace ConcurrentLinkedList.Tests.Unit
             }
         }
 
+        protected static void AssertTaskListRanSuccessfully(IEnumerable<Task<bool>> taskList)
+        {
+            foreach (var task in taskList)
+            {
+                if (task.Status != TaskStatus.RanToCompletion)
+                {
+                    Assert.Fail("One or more tasks did not run to completion.");
+                }
+            }
+        }
+
         protected static void AssertLinkedListHasNoCycles(IConcurrentLinkedList<dynamic> linkedList)
         {
             var currentNode = linkedList.First;

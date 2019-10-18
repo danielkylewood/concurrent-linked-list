@@ -7,7 +7,7 @@ namespace ConcurrentLinkedList.Tests.Unit
 {
     public class ConcurrentLinkedListTests : UnitTestBase
     {
-        private const int _numNodesToTest = 10000;
+        private const int _numNodesToTest = 30000;
         private const int _initialNodesInList = 1;
         private IConcurrentLinkedList<dynamic> _linkedList;
 
@@ -43,6 +43,7 @@ namespace ConcurrentLinkedList.Tests.Unit
 
             // Then all index values should be represented
             AssertTaskListResults(taskList);
+            AssertTaskListRanSuccessfully(taskList);
             AssertLinkedListHasNoCycles(_linkedList);
             AssertLinkedListHasNoDuplicate(_linkedList);
             AssertLinkedListContainsAllNodes(numberNodes + _initialNodesInList, _linkedList);
@@ -84,7 +85,9 @@ namespace ConcurrentLinkedList.Tests.Unit
 
             // Then there should be no active state nodes left in the list
             AssertTaskListResults(addTaskList);
+            AssertTaskListRanSuccessfully(addTaskList);
             AssertTaskListResults(removeTaskList);
+            AssertTaskListRanSuccessfully(removeTaskList);
             AssertLinkedListOnlyContainsInvalidStateNodes(_linkedList);
         }
 
@@ -108,7 +111,9 @@ namespace ConcurrentLinkedList.Tests.Unit
 
             // Then all tasks should have been successful and there should be a certain number of valid nodes
             AssertTaskListResults(addTaskList);
+            AssertTaskListRanSuccessfully(addTaskList);
             AssertTaskListResults(removeTaskList);
+            AssertTaskListRanSuccessfully(removeTaskList);
             AssertLinkedListHasNoCycles(_linkedList);
             AssertLinkedListContainsNumberOfValidNodes(numberNodes + _initialNodesInList, _linkedList);
         }
