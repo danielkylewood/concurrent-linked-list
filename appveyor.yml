@@ -4,11 +4,7 @@ configuration: Release
 before_build:
 - ps: nuget restore
 build:
-  verbosity: minimal
-  
-branches:
-  only:
-    - master    
+  verbosity: minimal  
 after_build:
 - ps: nuget pack src\ConcurrentLinkedList -OutputDirectory .\Artifacts -Version $env:APPVEYOR_BUILD_VERSION
 artifacts:
@@ -19,3 +15,5 @@ deploy:
     secure: IXPOCrCUrljhGbmUKteGUbtG22rLYuFTy8XUrxYf6rFuG942zE+VmMg7fFD85YoD
   skip_symbols: true
   artifact: /.*\.nupkg/
+  on:
+    branch: master

@@ -137,7 +137,6 @@ namespace ConcurrentLinkedList
                     if (originalValue == NodeState.INS)
                     {
                         result = current.Value;
-                        current.State = NodeState.INV;
                         return true;
                     }
                 }
