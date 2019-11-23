@@ -61,7 +61,7 @@ namespace ConcurrentLinkedList
             var current = _first;
             while (current != null)
             {
-                if (current.Value.Equals(value))
+                if (current.Value == null || current.Value.Equals(value))
                 {
                     var state = current.State;
                     if (state != NodeState.INV)

@@ -135,6 +135,28 @@ namespace ConcurrentLinkedList.Tests.Unit
             Assert.That(contains, Is.True);
         }
 
+        [Test]
+        public void When_Node_Is_Added_Then_Removed_Checking_Contains_Should_Return_False()
+        {
+            // Given a value to add
+            const string value = "ValueToAddThenRemove";
+
+            // And the value is added
+            var isAdded = _linkedList.TryAdd(value);
+            Assert.That(isAdded, Is.True);
+
+            // And then the value is removed
+            var isRemoved = _linkedList.Remove(value, out var valueRemoved);
+            Assert.That(isRemoved, Is.True);
+            Assert.That(valueRemoved, Is.EqualTo(value));
+
+            // When we check if the value is there
+            var contains = _linkedList.Contains(value);
+
+            // Then it is not
+            Assert.That(contains, Is.False);
+        }
+
         private static readonly object[] SingleAddCases =
         {
             new object[] { 12 },
