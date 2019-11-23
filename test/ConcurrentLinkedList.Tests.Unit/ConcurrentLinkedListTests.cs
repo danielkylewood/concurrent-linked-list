@@ -162,7 +162,7 @@ namespace ConcurrentLinkedList.Tests.Unit
         {
             // Given a value to remove (that is not already added previously)
             const string value = "ValueToRemoveThatDoesNotAlreadyExist";
-            const string expected = default;
+            const string expected = null;
 
             // When the value is removed
             var isRemoved = _linkedList.Remove(value, out var result);
