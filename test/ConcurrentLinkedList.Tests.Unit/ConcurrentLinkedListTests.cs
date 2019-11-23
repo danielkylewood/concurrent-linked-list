@@ -7,7 +7,7 @@ namespace ConcurrentLinkedList.Tests.Unit
 {
     public class ConcurrentLinkedListTests : UnitTestBase
     {
-        private const int _numNodesToTest = 10000;
+        private const int _numNodesToTest = 20000;
         private const int _initialNodesInList = 1;
         private IConcurrentLinkedList<dynamic> _linkedList;
 
@@ -43,6 +43,7 @@ namespace ConcurrentLinkedList.Tests.Unit
 
             // Then all index values should be represented
             AssertTaskListResults(taskList);
+            AssertTaskListRanSuccessfully(taskList);
             AssertLinkedListHasNoCycles(_linkedList);
             AssertLinkedListHasNoDuplicate(_linkedList);
             AssertLinkedListContainsAllNodes(numberNodes + _initialNodesInList, _linkedList);
@@ -84,7 +85,9 @@ namespace ConcurrentLinkedList.Tests.Unit
 
             // Then there should be no active state nodes left in the list
             AssertTaskListResults(addTaskList);
+            AssertTaskListRanSuccessfully(addTaskList);
             AssertTaskListResults(removeTaskList);
+            AssertTaskListRanSuccessfully(removeTaskList);
             AssertLinkedListOnlyContainsInvalidStateNodes(_linkedList);
         }
 
@@ -108,7 +111,9 @@ namespace ConcurrentLinkedList.Tests.Unit
 
             // Then all tasks should have been successful and there should be a certain number of valid nodes
             AssertTaskListResults(addTaskList);
+            AssertTaskListRanSuccessfully(addTaskList);
             AssertTaskListResults(removeTaskList);
+            AssertTaskListRanSuccessfully(removeTaskList);
             AssertLinkedListHasNoCycles(_linkedList);
             AssertLinkedListContainsNumberOfValidNodes(numberNodes + _initialNodesInList, _linkedList);
         }
@@ -128,6 +133,43 @@ namespace ConcurrentLinkedList.Tests.Unit
 
             // The result should be true
             Assert.That(contains, Is.True);
+        }
+
+        [Test]
+        public void When_Node_Is_Added_Then_Removed_Checking_Contains_Should_Return_False()
+        {
+            // Given a value to add
+            const string value = "ValueToAddThenRemove";
+
+            // And the value is added
+            var isAdded = _linkedList.TryAdd(value);
+            Assert.That(isAdded, Is.True);
+
+            // And then the value is removed
+            var isRemoved = _linkedList.Remove(value, out var valueRemoved);
+            Assert.That(isRemoved, Is.True);
+            Assert.That(valueRemoved, Is.EqualTo(value));
+
+            // When we check if the value is there
+            var contains = _linkedList.Contains(value);
+
+            // Then false returned
+            Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void When_Node_Does_Not_Exist_And_Is_Removed_Return_False()
+        {
+            // Given a value to remove (that is not already added previously)
+            const string value = "ValueToRemoveThatDoesNotAlreadyExist";
+            const string expected = null;
+
+            // When the value is removed
+            var isRemoved = _linkedList.Remove(value, out var result);
+
+            // Then false is returned as value does not exist 
+            Assert.That(result, Is.EqualTo(expected));
+            Assert.That(isRemoved, Is.False);
         }
 
         private static readonly object[] SingleAddCases =

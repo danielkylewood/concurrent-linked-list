@@ -61,7 +61,7 @@ namespace ConcurrentLinkedList
             var current = _first;
             while (current != null)
             {
-                if (current.Value.Equals(value))
+                if (current.Value == null || current.Value.Equals(value))
                 {
                     var state = current.State;
                     if (state != NodeState.INV)
@@ -122,7 +122,7 @@ namespace ConcurrentLinkedList
                     previous.Next = successor;
                     current = successor;
                 }
-                else if (!current.Value.Equals(value))
+                else if (current.Value != null && !current.Value.Equals(value))
                 {
                     previous = current;
                     current = current.Next;
@@ -137,7 +137,6 @@ namespace ConcurrentLinkedList
                     if (originalValue == NodeState.INS)
                     {
                         result = current.Value;
-                        current.State = NodeState.INV;
                         return true;
                     }
                 }
