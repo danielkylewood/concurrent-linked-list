@@ -122,7 +122,7 @@ namespace ConcurrentLinkedList
                     previous.Next = successor;
                     current = successor;
                 }
-                else if (!current.Value.Equals(value))
+                else if (current.Value != null && !current.Value.Equals(value))
                 {
                     previous = current;
                     current = current.Next;

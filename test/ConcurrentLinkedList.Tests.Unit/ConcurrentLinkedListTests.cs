@@ -153,8 +153,23 @@ namespace ConcurrentLinkedList.Tests.Unit
             // When we check if the value is there
             var contains = _linkedList.Contains(value);
 
-            // Then it is not
+            // Then false returned
             Assert.That(contains, Is.False);
+        }
+
+        [Test]
+        public void When_Node_Does_Not_Exist_And_Is_Removed_Return_False()
+        {
+            // Given a value to remove (that is not already added previously)
+            const string value = "ValueToRemoveThatDoesNotAlreadyExist";
+            const string expected = default;
+
+            // When the value is removed
+            var isRemoved = _linkedList.Remove(value, out var result);
+
+            // Then false is returned as value does not exist 
+            Assert.That(result, Is.EqualTo(expected));
+            Assert.That(isRemoved, Is.False);
         }
 
         private static readonly object[] SingleAddCases =
